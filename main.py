@@ -32,6 +32,7 @@ def print_b(board):
 def print_sb(board, mp = [], d = ''):
     for i in range(0, len(board)):
         # print spaces
+        print(' │', end = ' ')
         for j in range(0, len(board)):
             if (mp == [] or mp == ()):
                 print(str(board[i][j]), end = ' ')
@@ -47,7 +48,7 @@ def print_sb(board, mp = [], d = ''):
                         print('←', end = ' ')
                 else:
                     print(str(board[i][j]), end = ' ')
-        print()
+        print('│')
 
 def rand_black_init(board):
     rand = random.randint(1, 4)
