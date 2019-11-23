@@ -1,6 +1,9 @@
 import sys
 import random
 
+BOARD_SIZE = 18
+MAX_LOOPS = 500
+
 def init_board(size):
     board = []
 
@@ -12,20 +15,35 @@ def init_board(size):
     
     return board
 
-def print_b(board):
+# This is borked for now
+def print_b(board, mp = [], d = ''):
     for i in range(0, len(board)):
         # print in between spacers
         if i != 0 and i != len(board) + 1:
             print('├' + ('───┼' * (len(board) - 1)) + '───┤')
         elif i == 0:
             print('┌' + ('───┬' * (len(board) - 1)) + '───┐')
-        
         # print spaces
+        print(' │', end = ' ')
         for j in range(0, len(board)):
             print('│' + ' ' + str(board[i][j]) + ' ', end = '')
             if j == len(board) - 1:
                 print('│')
-        
+            if (mp == [] or mp == ()):
+                print(str(board[i][j]), end = ' ')
+            else:
+                if i == mp[0] and j == mp[1]:
+                    if d == 'N':
+                        print('↑', end = ' ')
+                    elif d == 'S':
+                        print('↓', end = ' ')
+                    elif d == 'E':
+                        print('→', end = ' ')
+                    elif d == 'W':
+                        print('←', end = ' ')
+                else:
+                    print(str(board[i][j]), end = ' ')
+        print('│')
         if i == (len(board) - 1):
             print('└' + ('───┴' * (len(board) - 1)) + '───┘')
 
@@ -150,10 +168,10 @@ def direction_calc(move):
         return 'E'
         
 if __name__ == '__main__':
-    board = init_board(8)
+    board = init_board(BOARD_SIZE)
 
     num_loop = 0
-    max_loop = 100
+    max_loop = MAX_LOOPS
     
     # keeps track of turn
     turn = ''
@@ -208,8 +226,8 @@ if __name__ == '__main__':
                 print('═' * (len(board) * 3))
                 print('L', num_loop, '| Turn', turn)
                 print('─' * (len(board) * 3))
+                print('No possible moves!')
                 if turn == 'B':
-                    print('No possible moves!')
                     print('White wins!')
                 if turn == 'W':
                     print('Black wins!')
