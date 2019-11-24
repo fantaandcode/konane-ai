@@ -1,6 +1,7 @@
 import sys
 import random
 import csv
+import datetime
 
 BOARD_SIZE = 18
 MAX_LOOPS = 300
@@ -300,17 +301,21 @@ def rand_walk_test():
     return run_data
 
 if __name__ == '__main__':
-    runs = 1000
+    runs = 500
+    start = datetime.datetime.now()
     with open('run_data.csv', mode = 'w') as run_data_file:
         run_writer = csv.writer(run_data_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         
-        first_row = ['turn', 'fb_rem', 'tturn']
-        for i in range(1, MAX_LOOPS):
-            first_row.append('t_' + str(i))
-        
+        first_row = ['win', 'fb_rem', 'tturn']
+
         run_writer.writerow(first_row)
 
-        for i in range(0, runs):
+        for i in range(1, runs):
+            first_row.append('t_' + str(i))
             run_data = rand_walk_test()
             print(run_data)
             run_writer.writerow(run_data)
+        
+    end = datetime.datetime.now()
+    total_time = end - start
+    print(total_time)
