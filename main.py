@@ -1,8 +1,9 @@
 import sys
 import random
+import csv
 
 BOARD_SIZE = 18
-MAX_LOOPS = 500
+MAX_LOOPS = 300
 
 def init_board(size):
     board = []
@@ -167,8 +168,16 @@ def direction_calc(move):
     elif start[1] < end[1]:
         return 'E'
         
-if __name__ == '__main__':
+def rand_walk_test():
+    # create board
     board = init_board(BOARD_SIZE)
+
+    # run data stored in array
+    # [0] is winner
+    # [1] is where the first black piece was removed
+    # [2] is total number of moves
+    # [4] onwards are the number of available moves at that turn for the player
+    run_data = ['', '', 0]
 
     num_loop = 0
     max_loop = MAX_LOOPS
@@ -215,6 +224,7 @@ if __name__ == '__main__':
             ret_val = remove(board, r_piece)
             board = ret_val[0]
             r_action = ret_val[1]
+            run_data[1] = r_piece
         elif num_loop == 2:
             r_piece = rand_white_init(board, r_piece)
             ret_val = remove(board, r_piece)
@@ -222,16 +232,25 @@ if __name__ == '__main__':
             r_action = ret_val[1]
         elif num_loop not in [0, 1, 2]:
             p_moves = poss_moves(board, turn)
+            
+            # if there are not possible moves, game ends, last player wins
             if p_moves == []:
                 print('═' * (len(board) * 3))
                 print('L', num_loop, '| Turn', turn)
                 print('─' * (len(board) * 3))
-                print('No possible moves!')
+                print('No possible', turn, 'moves!')
                 if turn == 'B':
                     print('White wins!')
+                    run_data[0] = 'White'
                 if turn == 'W':
                     print('Black wins!')
+                    run_data[0] = 'Black'
+                run_data[2] = num_loop - 2
                 break
+            else:
+                run_data.append(len(p_moves))
+
+            # randomly chosen move
             move = random_walk(p_moves)
             
             # passed piece
@@ -277,3 +296,21 @@ if __name__ == '__main__':
         num_loop += 1
     
     print('═' * (len(board) * 3))
+
+    return run_data
+
+if __name__ == '__main__':
+    runs = 1000
+    with open('run_data.csv', mode = 'w') as run_data_file:
+        run_writer = csv.writer(run_data_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        
+        first_row = ['turn', 'fb_rem', 'tturn']
+        for i in range(1, MAX_LOOPS):
+            first_row.append('t_' + str(i))
+        
+        run_writer.writerow(first_row)
+
+        for i in range(0, runs):
+            run_data = rand_walk_test()
+            print(run_data)
+            run_writer.writerow(run_data)
