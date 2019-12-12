@@ -323,24 +323,35 @@ def rand_walk_test():
 # runs everything for looping/testing for data analysis purposes; random walk is very even
 if __name__ == '__main__':
     # number of runs below
-    runs = 500
+    runs = 5000
 
     # gets start time of loop
     start = datetime.datetime.now()
     with open('run_data.csv', mode = 'w') as run_data_file:
-        run_writer = csv.writer(run_data_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        
-        first_row = ['win', 'fb_rem', 'tturn']
+        with open('turn_data.csv', mode = 'w') as turn_data_file:
+            run_writer = csv.writer(run_data_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            turn_writer = csv.writer(turn_data_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            
+            first_row = ['win', 'fb_rem', 'tturn']
 
-        for i in range(1, MAX_LOOPS):
-            first_row.append('t_' + str(i))
+            for i in range(0, MAX_LOOPS+3):
+                first_row.append('t_' + str(i))
 
-        run_writer.writerow(first_row)
+            run_writer.writerow(first_row)
 
-        for i in range(1, runs):
-            run_data = rand_walk_test()
-            print(run_data)
-            run_writer.writerow(run_data)
+            first_row = ['turn', 'moves']
+
+            turn_writer.writerow(first_row)
+
+            for i in range(0, runs):
+                run_data = rand_walk_test()
+                print(run_data)
+                run_writer.writerow(run_data)
+
+                turn_data = run_data[3:]
+                print(turn_data)
+                for i in range(len(turn_data)):
+                    turn_writer.writerow([i, turn_data[i]])
     
     # gets end time and calculates total time
     end = datetime.datetime.now()
