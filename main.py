@@ -11,6 +11,9 @@ TIME_MAX = 2        # maximum time per test, not used at the moment
 class Board():
     # Creates the self.state by initializing a 2D array, 1 representing black, 0 representing white
     # Black is in the top left, not sure what orientation it'd be server side / for communication
+    self.children = []
+    self.parent = None
+
     def __init__(self):
         self.state = init_board()
         for x in range(BOARD_SIZE):
