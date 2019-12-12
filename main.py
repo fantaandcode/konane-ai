@@ -58,7 +58,7 @@ class Board():
         return moves
     
     # possible board states
-    def poss_boards(self, moves):
+    def poss_boards(self, turn):
         moves = self.pos_moves(turn)
         boards = []
         for m in moves:
@@ -179,7 +179,7 @@ def direction_calc(move):
 # runs everything for looping/testing for data analysis purposes; random walk is very even
 if __name__ == '__main__':
     # number of runs below
-    runs = 5000
+    runs = 5
 
     # gets start time of loop
     start = datetime.datetime.now()
