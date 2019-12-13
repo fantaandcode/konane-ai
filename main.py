@@ -82,8 +82,8 @@ class Board():
             board_copy.move_piece(m)
             boards.append(board_copy)
             board_copy.move = m
-        
         self.children = boards
+        return boards
     
     # remove a piece from the board
     # rp: remove piece, tuple of position
