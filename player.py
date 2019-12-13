@@ -1,5 +1,6 @@
 import socket, sys
 import main
+import random
 
 class Player:
     def __init__(self, username, password, opponent):
@@ -126,7 +127,7 @@ class Player:
     def initial(self, choice):
         board = self.board.state
         if choice == 0:
-            x = randint(0, 3)
+            x = random.randint(0, 3)
             if x == 0:
                 self.remove((0, 0))
             elif x == 1:
