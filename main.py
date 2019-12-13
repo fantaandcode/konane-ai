@@ -13,7 +13,7 @@ class Board():
     # Creates the self.state by initializing a 2D array, 1 representing black, 0 representing white
     # Black is in the top left, not sure what orientation it'd be server side / for communication
     children = []
-    parent = None
+    move = None
     state = []
 
     def __init__(self):
@@ -81,7 +81,9 @@ class Board():
             board_copy = self.copy_state()
             board_copy.move_piece(m)
             boards.append(board_copy)
-        return boards
+            board_copy.move = m
+        
+        self.children = boards
     
     # remove a piece from the board
     # rp: remove piece, tuple of position
@@ -233,8 +235,11 @@ def board_test():
     print()
     print('Moves:', b.poss_moves(1))
     poss_b = b.poss_boards(1)
-    for b in poss_b:
-        b.print()
+    
+    for c in poss_b:
+        print()
+        c.print()
+        print(c.move)
 
 # runs everything for looping/testing for data analysis purposes; random walk is very even
 if __name__ == '__main__':
