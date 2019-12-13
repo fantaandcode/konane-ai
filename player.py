@@ -155,7 +155,7 @@ class Player:
                 self.remove((8, 9))
         
     def remove(self, move):
-        self.Board.remove(move)
+        self.board.remove(move)
 
 buf = 1024
 args = sys.argv
