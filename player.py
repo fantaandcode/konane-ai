@@ -120,6 +120,9 @@ class Player:
     def parse_move(move):
         return bytes('Move['+str(move[0][0])+','+str(move[0][1])+']:['+str(move[1][0])+','+str(move[1][1])+']\n', 'utf8')
 
+    def parse_rem(pos):
+        return bytes('Remove[' + str(pos[0])+','+str(pos[1])+']\n', 'utf8')
+
     def play(self):
         while True:
             self.read_socket()
