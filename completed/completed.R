@@ -1,12 +1,13 @@
 install.packages('plyr')
 install.packages('dplyr')
 install.packages('gridExtra')
-install.packages(tidyverse)
+install.packages('tidyverse')
 library(plyr)
 library(dplyr)
 library(tidyverse)
 library(grid)
 library(gridExtra)
+library(ggplot2)
 
 rd <- read.csv(file = 'run_data.csv')
 td <- read.csv(file = 'turn_data.csv')
@@ -15,12 +16,8 @@ td <- read.csv(file = 'turn_data.csv')
 rd[is.na(rd)] <- 0
 td[is.na(td)] <- 0
 
-color_win <- rd[1:2]
-color_win <- count(color_win, 'fb_rem')
-color_win$b_tot <- as.data.frame.matrix(t(table(rd[1:2])))$Black
-color_win$w_tot <- as.data.frame.matrix(t(table(rd[1:2])))$White
-color_win$b_wr <- color_win$b_tot / color_win$freq
-color_win$w_wr <- color_win$w_tot / color_win$freq
+color_win <- data.frame(table(rd[1:2]))
+summary(rd$tturn)
 
 # select only 
 rd_turns <- rd[ ,!(colnames(rd) %in% c('win', 'fb_rem', 'tturn'))]
@@ -48,8 +45,9 @@ td_w_plot <- ggplot(td_white, aes(x=turn, y=moves)) + xlim(0, 150) + ylim(0, 100
 bt_plot <- td_b_plot + stat_density_2d(geom = "raster", aes(fill = stat(density)), contour = FALSE) + scale_fill_viridis_c()
 wt_plot <- td_w_plot + stat_density_2d(geom = "raster", aes(fill = stat(density)), contour = FALSE) + scale_fill_viridis_c()
 
-bt_full_plot = bt_plot + ggtitle("Available Black Moves") + theme(legend.position = "none")
-wt_full_plot = wt_plot + ggtitle("Available White Moves") + theme(legend.position = "none")
+bt_full_plot = bt_plot + ggtitle("Black") + theme(legend.position = "none")
+wt_full_plot = wt_plot + ggtitle("White") + theme(legend.position = "none")
 
-grid.arrange(bt_full_plot, wt_full_plot, nrow=1)
+# put black and white plots together
+grid.arrange(bt_full_plot, wt_full_plot, top = textGrob("Available Moves at nth Turn", gp = gpar(fontsize=16)), nrow=1)
 

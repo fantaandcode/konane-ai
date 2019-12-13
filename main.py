@@ -2,6 +2,7 @@ import sys
 import random
 import csv
 import datetime
+import copy
 
 # global variables
 BOARD_SIZE = 18     # self-explanatory
@@ -11,11 +12,11 @@ TIME_MAX = 2        # maximum time per test, not used at the moment
 class Board():
     # Creates the self.state by initializing a 2D array, 1 representing black, 0 representing white
     # Black is in the top left, not sure what orientation it'd be server side / for communication
-    self.children = []
-    self.parent = None
+    children = []
+    parent = None
+    state = []
 
     def __init__(self):
-        self.state = init_board()
         for x in range(BOARD_SIZE):
             self.state.append([])
             for y in range(BOARD_SIZE):
@@ -60,20 +61,21 @@ class Board():
         # returns an array of tuples, first term is piece position, second term is moved location
         return moves
     
-    # possible board states
-    def poss_boards(self, turn):
-        moves = self.pos_moves(turn)
-        boards = []
-        for m in moves:
-            boards.append(self.copy().move(m))
-        
-        return boards
-    
     # returns a copy of the board
-    def copy(self):
+    def copy_state(self):
         x = Board()
         x.state = copy.deepcopy(self.state)
         return x
+
+    # possible board states
+    def poss_boards(self, turn):
+        moves = self.poss_moves(turn)
+        boards = []
+        for m in moves:
+            board_copy = self.copy_state()
+            boards.append(board_copy.move_piece(m))
+        
+        return boards
     
     # remove a piece from the board
     # rp: remove piece, tuple of position
@@ -91,22 +93,22 @@ class Board():
         p_piece = (int((move[0][0] + move[1][0])/2), int((move[0][1] + move[1][1])/2))
 
         # remove moving piece
-        remove(move[0])
+        self.remove(move[0])
         # remove passed over piece
-        remove(p_piece)
+        self.remove(p_piece)
         # add final moving piece location
-        add(move[1])
+        self.add(move[1])
     
 
 # Print short self.state, originally meant to be a more compact, aesthetics-wise of printing a self.state
 # It gets the direction of the move and prints an arrow depending on the direction the piece moved
-def print_sb(self.state, mp = [], d = ''):
-    for i in range(0, len(self.state)):
+def print_sb(board, mp = [], d = ''):
+    for i in range(0, len(board.state)):
         # print spaces
         print(' │', end = ' ')
-        for j in range(0, len(self.state)):
+        for j in range(0, len(board.state)):
             if (mp == [] or mp == ()):
-                print(str(self.state[i][j]), end = ' ')
+                print(str(board.state[i][j]), end = ' ')
             else:
                 if i == mp[0] and j == mp[1]:
                     if d == 'N':
@@ -118,14 +120,14 @@ def print_sb(self.state, mp = [], d = ''):
                     elif d == 'W':
                         print('←', end = ' ')
                 else:
-                    print(str(self.state[i][j]), end = ' ')
+                    print(str(board.state[i][j]), end = ' ')
         print('│')
 
 # Randomizes the black initial move, in the corners or in the middle
 # RETURNS THE PIECE REMOVED
-def rand_black_init(self.state):
+def rand_black_init():
     rand = random.randint(1, 4)
-    size = len(self.state)
+    size = BOARD_SIZE
 
     choices = [(0, 0), (int(size / 2 - 1), int(size / 2) - 1), (int(size / 2), int(size / 2)), (size - 1, size - 1)]
 
@@ -133,9 +135,9 @@ def rand_black_init(self.state):
 
 # Randomizes the white initial move, adjacent to the initial black move
 # RETURNS THE PIECE REMOVED
-def rand_white_init(self.state, b_init):
+def rand_white_init(b_init):
     rand = 0
-    size = len(self.state)
+    size = BOARD_SIZE
 
     choices = []
 
@@ -179,12 +181,7 @@ def direction_calc(move):
     elif start[1] < end[1]:
         return 'E'
 
-# runs everything for looping/testing for data analysis purposes; random walk is very even
-if __name__ == '__main__':
-    # number of runs below
-    runs = 5
-
-    # gets start time of loop
+def test(runs):
     start = datetime.datetime.now()
     with open('run_data.csv', mode = 'w') as run_data_file:
         with open('turn_data.csv', mode = 'w') as turn_data_file:
@@ -203,7 +200,7 @@ if __name__ == '__main__':
             turn_writer.writerow(first_row)
 
             for i in range(0, runs):
-                run_data = rand_walk_test()
+                run_data = []
                 print(run_data)
                 run_writer.writerow(run_data)
 
@@ -218,3 +215,23 @@ if __name__ == '__main__':
 
     # print total time needed to do all tests
     print('Testing time:', total_time)
+
+def board_test():
+    b = Board()
+    b.print()
+    black_first = rand_black_init()
+    white_first = rand_white_init(black_first)
+    b.remove(black_first)
+    b.remove(white_first)
+    b.add(black_first)
+    b.add(white_first)
+    print()
+    b.print()
+
+# runs everything for looping/testing for data analysis purposes; random walk is very even
+if __name__ == '__main__':
+    # number of runs below
+    # runs = 5
+
+    # test(runs)
+    board_test()
