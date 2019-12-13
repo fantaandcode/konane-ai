@@ -73,6 +73,56 @@ class Board():
         x.state = new_board
         return x
 
+    def minimax(self, color, depth=5, alpha=None, beta=None, maxPlayer=True):
+        if alpha is None:
+            alpha = float('-inf')
+        if beta is None:
+            beta = float('inf')
+        if depth == 0 or self.gameOver(board, maxPlayer):
+            return self
+
+        if maxPlayer:
+            # initially set to negative infinity
+            maxEval = self
+            for child in self.poss_boards(color):
+                move = child.minimax((color + 1) % 2, depth=(depth - 1), alpha=alpha, beta=beta, maxPlayer=False)
+                maxEval = self.maxBoard(maxEval, move, color)
+                alpha = max(alpha, move.weight(color))
+                if beta <= alpha:
+                    break
+            return maxEval
+
+        else:
+            # initially set to positive infinity
+            minEval = self
+            for child in self.poss_boards(color):
+                move = child.minimax((color + 1) % 2, depth=(depth - 1), alpha=alpha, beta=beta, maxPlayer=True)
+                minEval = self.minBoard(minEval, move, color)
+                beta = min(beta, move.weight(color))
+                if beta <= alpha:
+                    break
+            return minEval
+    
+    def maxBoard(self, board1, board2, turn):
+        if board1.weight(turn) > board2.weight(turn):
+            return board1
+        else:
+            return board2
+
+    def minBoard(self, board1, board2, turn):
+        if board1.weight(turn) > board2.weight(turn):
+            return board2
+        else:
+            return board1
+
+    def gameOver(self, board, color):
+        if color:
+            turn=0 
+        else:
+            turn=1
+
+        return True if len(board.poss_moves(turn)) == 0 else False
+
     # possible board states
     def poss_boards(self, turn):
         moves = self.poss_moves(turn)
@@ -240,6 +290,8 @@ def board_test():
         print()
         c.print()
         print(c.move)
+    
+    b.minimax
 
 # runs everything for looping/testing for data analysis purposes; random walk is very even
 if __name__ == '__main__':
