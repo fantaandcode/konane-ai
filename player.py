@@ -3,7 +3,7 @@ import main
 
 class Player:
     def __init__(self, username, password, opponent):
-        self.cur_board = main.Board()
+        self.board = main.Board()
         self.player = None #is player 0 or 1
         self.connected = 0
         self.game = None
@@ -23,7 +23,7 @@ class Player:
         print("Player: " + self.player)
         print("Playing game: " + self.game)
         print("Current Board:")
-        for x in self.cur_board.state:
+        for x in self.board.state:
             for y in x:
                 if y is None:
                     y = ' '
