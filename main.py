@@ -64,7 +64,11 @@ class Board():
     # returns a copy of the board
     def copy_state(self):
         x = Board()
-        x.state = copy.deepcopy(self.state)
+        new_board = []
+        for i in range(0, BOARD_SIZE):
+            new_board.append([])
+            for j in range(0, BOARD_SIZE):
+                new_board[i].append(self.state[i][j])
         return x
 
     # possible board states
@@ -73,7 +77,8 @@ class Board():
         boards = []
         for m in moves:
             board_copy = self.copy_state()
-            boards.append(board_copy.move_piece(m))
+            board_copy.move_piece(m)
+            boards.append(board_copy)
         
         return boards
     
@@ -223,10 +228,14 @@ def board_test():
     white_first = rand_white_init(black_first)
     b.remove(black_first)
     b.remove(white_first)
-    b.add(black_first)
-    b.add(white_first)
     print()
     b.print()
+    print()
+    print('Moves:', b.poss_moves(1))
+    poss_b = b.poss_boards(1)
+    for i in poss_b:
+        print(i.print())
+        print()
 
 # runs everything for looping/testing for data analysis purposes; random walk is very even
 if __name__ == '__main__':
