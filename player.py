@@ -75,8 +75,15 @@ class Player:
             print("Player: " + str(self.player))
         elif (b'Player' in data) and (b'?Remove' in data) and (b'Removed' not in data): #initial move if coinflip win
             self.initial(0)
-        elif (b'?Remove' in data): #initial move if coinflip loss
+        elif (b'?Remove:' in data): #initial move if coinflip loss
             self.initial(1)
+        elif (b'?Removed:' in data):
+            tmp = str(data)[11:-4]
+            index = tmp.find(',')
+            rm = ()
+            rm = (int(tmp[:index]), int(tmp[index + 1:]))
+            
+            self.remove()
         elif (b'?Move' in data): #make a move
             self.move()
         elif (b'Move[' in data):
